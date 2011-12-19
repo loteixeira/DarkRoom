@@ -4,7 +4,7 @@ Room = function(gl, size) {
 	
 	var arrays = [ "aPosition", "aTexcoord" ];
 	//var arrays = [ "aPosition" ];
-	var uniforms = [ "uProjection", "uModelview", "uSampler" ];
+	var uniforms = [ "uProjection", "uModelview", "uSampler", "uAmbientLight" ];
 	//var uniforms = [ "uProjection", "uModelview" ];
 	this.shaderProgram = ShaderDatabase.link(gl, "room-vertex-shader", "room-frag-shader", arrays, uniforms);
 };
@@ -16,6 +16,7 @@ Room.prototype.update = function(gl, camera) {
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, camera.getProjection());
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uModelview"], false, camera.getModelview());
+    gl.uniform3fv(this.shaderProgram.uniforms["uAmbientLight"], [0.2, 0.2, 0.2]);
 	
 	// enable vertex arrays
 	gl.enableVertexAttribArray(this.shaderProgram.arrays["aPosition"]);

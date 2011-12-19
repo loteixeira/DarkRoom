@@ -86,10 +86,10 @@ MeshFactory.createRoomMesh = function(gl, size) {
 		-halfX, halfY, halfZ,   // 19
 		
 		// at z = -half
-		-halfX, -halfY, halfZ,  // 20
-		halfX, -halfY, halfZ,   // 21
-		halfX, halfY, halfZ,    // 22
-		-halfX, halfY, halfZ    // 23
+		-halfX, -halfY, -halfZ,  // 20
+		halfX, -halfY, -halfZ,   // 21
+		halfX, halfY, -halfZ,    // 22
+		-halfX, halfY, -halfZ    // 23
 	];
 	
 	var position = gl.createBuffer();

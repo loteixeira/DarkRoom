@@ -78,12 +78,12 @@
 			#endif
 
 			uniform sampler2D uSampler;
+			uniform vec3 uAmbientLight;
 
 			varying vec2 vTexcoord;
 
 			void main(void) {
-				vec4 color = texture2D(uSampler, vTexcoord);
-				//vec4 color = vec4(0.5, 0.5, 0.0, 1.0);
+				vec4 color = texture2D(uSampler, vTexcoord) * vec4(uAmbientLight, 1.0);
 				gl_FragColor = color;
 			}
 		</script>

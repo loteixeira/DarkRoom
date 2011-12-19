@@ -49,7 +49,7 @@ window.onload = function () {
 	}
 };
 
-window.onresize = function(e) {
+/*window.onresize = function(e) {
 	if (scene) {
 		scene.canvas.width = window.innerWidth;
 		scene.canvas.height = window.innerHeight;
@@ -58,18 +58,24 @@ window.onresize = function(e) {
 
 		scene.reshape(scene.canvas.width, scene.canvas.height);
 	}
-};
+};*/
 
 window.onmousedown = function(e) {
-	scene.mouseEvent("down", e);
+	if (scene) {
+		scene.mouseEvent("down", e);
+	}
 };
 
 window.onmousemove = function(e) {
-	scene.mouseEvent("move", e);
+	if (scene) {
+		scene.mouseEvent("move", e);
+	}
 };
 
 window.onmouseup = function(e) {
-	scene.mouseEvent("up", e);
+	if (scene) {
+		scene.mouseEvent("up", e);
+	}
 };
 
 function start() {
@@ -85,10 +91,10 @@ function createCanvas() {
 	body.style.margin = '0';
 	body.appendChild(canvas);
 	
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-	//canvas.width = 600;
-	//canvas.height = 400;
+	//canvas.width = window.innerWidth;
+	//canvas.height = window.innerHeight;
+	canvas.width = 800;
+	canvas.height = 600;
 	
 	return canvas;
 }

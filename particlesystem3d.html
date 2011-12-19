@@ -1,0 +1,93 @@
+<html>
+	<head>
+		<!-- lib javascript -->
+		<script type="application/javascript" src="js/lib/glMatrix-0.9.5.min.js"></script>
+		<script type="application/javascript" src="js/lib/sylvester.src.js"></script>
+		<script type="application/javascript" src="js/lib/Stats.js"></script>
+	
+		<!-- app javascript -->
+		<script type="application/javascript" src="js/main.js"></script>
+		<script type="application/javascript" src="js/mesh_factory.js"></script>
+		<script type="application/javascript" src="js/shader_database.js"></script>
+		<script type="application/javascript" src="js/texture_loader.js"></script>
+		<script type="application/javascript" src="js/particle_system.js"></script>
+		<script type="application/javascript" src="js/room.js"></script>
+		<script type="application/javascript" src="js/camera.js"></script>
+		<script type="application/javascript" src="js/scene.js"></script>
+		
+		<!-- particle glsl shaders -->
+		<script id="particle-vertex-shader" type="x-shader/x-vertex">
+			attribute vec3 aPosition;
+			attribute vec2 aTexcoord;
+			attribute float aLife;
+
+			uniform mat4 uModelview;
+			uniform mat4 uProjection;
+
+			varying vec2 vTexcoord;
+			varying float vLife;
+
+			void main(void) {
+				gl_Position = uProjection * uModelview * vec4(aPosition, 1.0);
+				vTexcoord = aTexcoord;
+				vLife = aLife;
+			}
+		</script>
+		
+		<script id="particle-frag-shader" type="x-shader/x-fragment">
+			#ifdef GL_ES
+			precision highp float;
+			#endif
+
+			uniform sampler2D uSampler;
+
+			varying vec2 vTexcoord;
+			varying float vLife;
+
+			void main(void) {
+				float timeFactor = 1.0 - vLife;
+
+				vec4 color = texture2D(uSampler, vTexcoord);
+				color.r *= timeFactor;
+				color.g *= timeFactor * timeFactor;
+				color.b = 0.0;
+
+				gl_FragColor = color;
+			}
+		</script>
+		
+		<!-- room glsl shaders -->
+		<script id="room-vertex-shader" type="x-shader/x-vertex">
+			attribute vec3 aPosition;
+			attribute vec2 aTexcoord;
+
+			uniform mat4 uModelview;
+			uniform mat4 uProjection;
+
+			varying vec2 vTexcoord;
+
+			void main(void) {
+				gl_Position = uProjection * uModelview * vec4(aPosition, 1.0);
+				vTexcoord = aTexcoord;
+			}
+		</script>
+		
+		<script id="room-frag-shader" type="x-shader/x-fragment">
+			#ifdef GL_ES
+			precision highp float;
+			#endif
+
+			uniform sampler2D uSampler;
+
+			varying vec2 vTexcoord;
+
+			void main(void) {
+				vec4 color = texture2D(uSampler, vTexcoord);
+				//vec4 color = vec4(0.5, 0.5, 0.0, 1.0);
+				gl_FragColor = color;
+			}
+		</script>
+	</head>
+	<body id="body">
+	</body>
+</html>

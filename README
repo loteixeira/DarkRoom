@@ -1,0 +1,10 @@
+Javascript and WebGL demo.
+Simulation of fire (particle system) within a dark room (walls with dynamic lighting).
+
+Third party libraries:
+gl-matrix (https://github.com/toji/gl-matrix)
+stats.js (https://github.com/mrdoob/stats.js)
+
+Information:
+After cloning this repository, to properly run the HTML file you must enable your browser for local access:
+- Firefox: go to "about:config" and modify"security.fileuri.strict_origin_policy" to false.

@@ -49,6 +49,8 @@ ParticleSystem.prototype.update = function(gl, interval, camera) {
 	// update particles
 	this.updateParticles(interval, camera);
 	
+	gl.enable(gl.BLEND);
+	
 	// setup shader
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, camera.getProjection());

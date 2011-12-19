@@ -10,6 +10,8 @@ Room = function(gl, size) {
 };
 
 Room.prototype.update = function(gl, camera) {
+	gl.disable(gl.BLEND);
+	
 	// setup shader
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, camera.getProjection());

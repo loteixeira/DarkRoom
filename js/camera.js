@@ -1,4 +1,4 @@
-function Camera(gl, aspect) {
+function Camera(gl, aspect, halfMaxZ) {
 	this.gl = gl;
 	this.modelview = mat4.create();
 	this.projection = mat4.create();
@@ -6,12 +6,13 @@ function Camera(gl, aspect) {
 	this.center = vec3.create([0, 0, 0]);
 	this.up = vec3.create([0, 1, 0]);
 	this.setAspect(aspect);
+	this.halfMaxZ = halfMaxZ;
 
 	this.radius = 100;
-	this.phi = Math.PI / 2;
 	this.theta = 0;
-	this.velPhi = 0;
 	this.velTheta = 0;
+	this.z = 0;
+	this.velZ = 0;
 	this.lastX = 0;
 	this.lastY = 0;
 	this.dragging = false;
@@ -58,24 +59,30 @@ Camera.prototype.update = function(interval) {
 		this.velTheta *= 0.99;
 	}
 	
-	var time = interval / 100;
-	
-	this.phi += this.velPhi * time;
-	
-	if (this.theta < Math.PI / 4) {
-		this.theta = Math.PI / 4;
-		this.velTheta = 0;
-	} else if (this.theta < -Math.PI / 4) {
-		this.theta = -Math.PI / 4;
-		this.velTheta = 0;
+	if (Math.abs(this.velZ) < 0.001) {
+		this.velZ = 0;
+	} else {
+		this.velZ *= 0.99;
 	}
+	
+	var time = interval / 100;
 	
 	this.theta += this.velTheta * time;
 	
-	// calculate camera position using spherical coordinate system
-	this.eye[0] = this.radius * Math.sin(this.phi) * Math.cos(this.theta);
-	this.eye[1] = this.radius * Math.sin(this.phi) * Math.sin(this.theta);
-	this.eye[2] = this.radius * Math.cos(this.phi);
+	if (this.z < -this.halfMaxZ) {
+		this.z = -this.halfMaxZ;
+		this.velZ = 0;
+	} else if (this.z > this.halfMaxZ) {
+		this.z = this.halfMaxZ;
+		this.velZ = 0;
+	} else {
+		this.z += this.velZ * time;
+	}
+	
+	// calculate camera position using cylindrical coordinate system
+	this.eye[0] = this.radius * Math.cos(this.theta);
+	this.eye[1] = this.z;
+	this.eye[2] = this.radius * Math.sin(this.theta);
 	
 	// create projection matrix
 	mat4.perspective(45, this.aspect, 1, 1000, this.projection);
@@ -94,11 +101,11 @@ Camera.prototype.mouseEvent = function(type, event) {
 	} else if (type == "move") {
 		// mouse move event
 		if (this.dragging) {
-			var dPhi = (this.lastX - event.clientX) / this.gl.viewportWidth;
-			var dTheta = (this.lastY - event.clientY) / this.gl.viewportHeight;
+			var dTheta = (this.lastX - event.clientX) / this.gl.viewportWidth;
+			this.velTheta += dTheta * (Math.PI / 32);
 			
-			this.velPhi += dPhi * (Math.PI / 4);
-			this.velTheta += dTheta * (Math.PI / 8);
+			var dZ = (this.lastY - event.clientY) / this.gl.viewportHeight;
+			this.velZ += dZ * 5;
 			
 			this.lastX = event.clientX;
 			this.lastY = event.clientY;			

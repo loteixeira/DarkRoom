@@ -8,9 +8,10 @@ function Scene(canvas, gl) {
 Scene.prototype.start = function() {
 	console.log("done!");
 	
-	this.room = new Room(this.gl, [300, 200, 300]);
+	var roomSize = [300, 200, 300];
+	this.room = new Room(this.gl, roomSize);
 	this.particleSystem = new ParticleSystem(this.gl, 1000, 2, 900);
-	this.camera = new Camera(this.gl, this.canvas.width / this.canvas.height);
+	this.camera = new Camera(this.gl, this.canvas.width / this.canvas.height, roomSize[1] / 6);
 };
 
 Scene.prototype.update = function(interval) {

@@ -14,7 +14,8 @@ Room.prototype.renderCube = function(gl, mesh, projection, modelview) {
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, projection);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uModelview"], false, modelview);
-    gl.uniform3fv(this.shaderProgram.uniforms["uDiffuseLight"], [0.1, 0.1, 0.05]);
+    //gl.uniform3fv(this.shaderProgram.uniforms["uDiffuseLight"], [0.1, 0.1, 0.05]);
+    gl.uniform3fv(this.shaderProgram.uniforms["uDiffuseLight"], [1.0, 1.0, 0.5]);
     gl.uniform3fv(this.shaderProgram.uniforms["uAmbientLight"], [0.05, 0.05, 0.05]);
 	
 	// enable vertex arrays

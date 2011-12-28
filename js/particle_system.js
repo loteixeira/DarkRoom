@@ -9,7 +9,7 @@ ParticleSystem = function(gl, particleCount, creationRate, duration) {
 	this.posArray = new Float32Array(particleCount * 12);
 	this.lifeArray = new Float32Array(particleCount * 4);
 	this.particleMesh = MeshFactory.createParticleMesh(gl, particleCount);
-	this.particleTexture = TextureLoader.get("res/particle2.png");
+	this.particleTexture = TextureLoader.get("res/particle.png");
 	
 	var arrays = [ "aPosition", "aTexcoord", "aLife" ];
 	var uniforms = [ "uProjection", "uModelview", "uSampler" ];

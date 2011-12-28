@@ -48,44 +48,48 @@ MeshFactory.createParticleMesh = function(gl, count) {
 	return mesh;
 };
 
-MeshFactory.createRoomMesh = function(gl, size) {
+MeshFactory.createCubeMesh = function(gl, size, invertNormal) {
+	if (!invertNormal) {
+		invertNormal = false;
+	}
+	
 	var halfX = size[0] / 2;
 	var halfY = size[1] / 2;
 	var halfZ = size[2] / 2;
 	
 	// create position buffer
 	var positionData = [
-		// at x = half
+		// at x = halfX
 		halfX, -halfY, -halfZ,  // 0
 		halfX, -halfY, halfZ,   // 1
 		halfX, halfY, halfZ,    // 2
 		halfX, halfY, -halfZ,   // 3
 		
-		// at x = -half
+		// at x = -halfX
 		-halfX, -halfY, -halfZ, // 4
 		-halfX, -halfY, halfZ,  // 5
 		-halfX, halfY, halfZ,   // 6
 		-halfX, halfY, -halfZ,  // 7
 
-		// at y = half
+		// at y = halfY
 		-halfX, halfY, -halfZ,  // 8
 		-halfX, halfY, halfZ,   // 9
 		halfX, halfY, halfZ,    // 10
 		halfX, halfY, -halfZ,   // 11
 		
-		// at y = -half
+		// at y = -halfY
 		-halfX, -halfY, -halfZ, // 12
 		-halfX, -halfY, halfZ,  // 13
 		halfX, -halfY, halfZ,   // 14
 		halfX, -halfY, -halfZ,  // 15
 		
-		// at z = half
+		// at z = halfZ
 		-halfX, -halfY, halfZ,  // 16
 		halfX, -halfY, halfZ,   // 17
 		halfX, halfY, halfZ,    // 18
 		-halfX, halfY, halfZ,   // 19
 		
-		// at z = -half
+		// at z = -halfZ
 		-halfX, -halfY, -halfZ,  // 20
 		halfX, -halfY, -halfZ,   // 21
 		halfX, halfY, -halfZ,    // 22
@@ -95,6 +99,49 @@ MeshFactory.createRoomMesh = function(gl, size) {
 	var position = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, position);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positionData), gl.STATIC_DRAW);
+	
+	// create normal buffer
+	var normalData = [
+		// at x = halfX
+		(invertNormal ? 1 : -1), 0, 0,
+		(invertNormal ? 1 : -1), 0, 0,
+		(invertNormal ? 1 : -1), 0, 0,
+		(invertNormal ? 1 : -1), 0, 0,
+		
+		// at x = -halfX
+		(invertNormal ? -1 : 1), 0, 0,
+		(invertNormal ? -1 : 1), 0, 0,
+		(invertNormal ? -1 : 1), 0, 0,
+		(invertNormal ? -1 : 1), 0, 0,
+		
+		// at y = halfY
+		0, (invertNormal ? 1 : -1), 0,
+		0, (invertNormal ? 1 : -1), 0,
+		0, (invertNormal ? 1 : -1), 0,
+		0, (invertNormal ? 1 : -1), 0,
+		
+		// at y = -halfY
+		0, (invertNormal ? -1 : 1), 0,
+		0, (invertNormal ? -1 : 1), 0,
+		0, (invertNormal ? -1 : 1), 0,
+		0, (invertNormal ? -1 : 1), 0,
+		
+		// at z = halfZ
+		0, 0, (invertNormal ? 1 : -1),
+		0, 0, (invertNormal ? 1 : -1),
+		0, 0, (invertNormal ? 1 : -1),
+		0, 0, (invertNormal ? 1 : -1),
+		
+		//at z = -halfZ
+		0, 0, (invertNormal ? -1 : 1),
+		0, 0, (invertNormal ? -1 : 1),
+		0, 0, (invertNormal ? -1 : 1),
+		0, 0, (invertNormal ? -1 : 1)
+	];
+	
+	var normal = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, normal);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalData), gl.STATIC_DRAW);
 	
 	// create texture coordinate buffer
 	var texcoordData = [];
@@ -112,27 +159,27 @@ MeshFactory.createRoomMesh = function(gl, size) {
 	
 	// create index buffer
 	var indexData = [
-		// at x = half
+		// at x = halfX
 		0, 1, 2,
 		0, 2, 3,
 		
-		// at x = -half
+		// at x = -halfX
 		4, 5, 6,
 		4, 6, 7,
 		
-		// at y = half
+		// at y = halfY
 		8, 9, 10,
 		8, 10, 11,
 		
-		// at y = -half
+		// at y = -halfY
 		12, 13, 14,
 		12, 14, 15,
 		
-		// z = half
+		// z = halfZ
 		16, 17, 18,
 		16, 18, 19,
 		
-		// z = -half
+		// z = -halfZ
 		20, 21, 22,
 		20, 22, 23
 	];
@@ -142,6 +189,6 @@ MeshFactory.createRoomMesh = function(gl, size) {
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexData), gl.STATIC_DRAW);
 	
 	// return object
-	var mesh = { positionBuffer: position, texcoordBuffer: texcoord, indexBuffer: index };
+	var mesh = { positionBuffer: position, normalBuffer: normal, texcoordBuffer: texcoord, indexBuffer: index };
 	return mesh;
 };

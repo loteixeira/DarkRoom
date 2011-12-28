@@ -51,6 +51,7 @@
 				color.r *= timeFactor;
 				color.g *= timeFactor * timeFactor;
 				color.b = 0.0;
+				color.a *= timeFactor;
 
 				gl_FragColor = color;
 			}
@@ -59,15 +60,20 @@
 		<!-- room glsl shaders -->
 		<script id="room-vertex-shader" type="x-shader/x-vertex">
 			attribute vec3 aPosition;
+			attribute vec3 aNormal;
 			attribute vec2 aTexcoord;
 
 			uniform mat4 uModelview;
 			uniform mat4 uProjection;
 
+			varying vec3 vPosition;
+			varying vec3 vNormal;
 			varying vec2 vTexcoord;
 
 			void main(void) {
 				gl_Position = uProjection * uModelview * vec4(aPosition, 1.0);
+				vPosition = aPosition;
+				vNormal = aNormal;
 				vTexcoord = aTexcoord;
 			}
 		</script>
@@ -79,11 +85,18 @@
 
 			uniform sampler2D uSampler;
 			uniform vec3 uAmbientLight;
+			uniform vec3 uDiffuseLight;
 
+			varying vec3 vPosition;
+			varying vec3 vNormal;
 			varying vec2 vTexcoord;
 
 			void main(void) {
-				vec4 color = texture2D(uSampler, vTexcoord) * vec4(uAmbientLight, 1.0);
+				vec3 normalizedPosition = -normalize(vPosition);
+				vec3 normalizedNormal = normalize(vNormal);
+				float posDotNormal = max(dot(normalizedPosition, normalizedNormal), 0.0);
+				//vec4 color = texture2D(uSampler, vTexcoord) * vec4(uDiffuseLight * posDotNormal, 1.0);
+				vec4 color = texture2D(uSampler, vTexcoord) * vec4(uAmbientLight + uDiffuseLight * posDotNormal, 1.0);
 				gl_FragColor = color;
 			}
 		</script>

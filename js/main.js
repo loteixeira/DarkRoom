@@ -22,6 +22,7 @@ window.onload = function () {
         gl.depthFunc(gl.LESS);
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_COLOR);
+        //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         	
         // load shaders
     	var shaders = [
@@ -33,7 +34,7 @@ window.onload = function () {
     	// load textures
     	//new TextureLoader(gl, "res/particle.png", function(){});
     	var textures = [
-			"res/particle.png",
+			"res/particle2.png",
 			"res/wall.jpg"
 		];
     	TextureLoader.load(gl, textures, start);

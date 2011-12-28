@@ -47,12 +47,6 @@ Camera.prototype.getUp = function() {
 };
 
 Camera.prototype.update = function(interval) {
-	if (Math.abs(this.velPhi) < 0.001) {
-		this.velPhi = 0;
-	} else {
-		this.velPhi *= 0.99;
-	}
-	
 	if (Math.abs(this.velTheta) < 0.001) {
 		this.velTheta = 0;
 	} else {
@@ -65,7 +59,7 @@ Camera.prototype.update = function(interval) {
 		this.velZ *= 0.99;
 	}
 	
-	var time = interval / 100;
+	var time = interval / 1000;
 	
 	this.theta += this.velTheta * time;
 	
@@ -102,10 +96,10 @@ Camera.prototype.mouseEvent = function(type, event) {
 		// mouse move event
 		if (this.dragging) {
 			var dTheta = (this.lastX - event.clientX) / this.gl.viewportWidth;
-			this.velTheta += dTheta * (Math.PI / 32);
+			this.velTheta += dTheta * (Math.PI / 2);
 			
 			var dZ = (this.lastY - event.clientY) / this.gl.viewportHeight;
-			this.velZ += dZ * 5;
+			this.velZ += dZ * 25;
 			
 			this.lastX = event.clientX;
 			this.lastY = event.clientY;			

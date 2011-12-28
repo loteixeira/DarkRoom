@@ -9,16 +9,11 @@ ParticleSystem = function(gl, particleCount, creationRate, duration) {
 	this.posArray = new Float32Array(particleCount * 12);
 	this.lifeArray = new Float32Array(particleCount * 4);
 	this.particleMesh = MeshFactory.createParticleMesh(gl, particleCount);
-	this.particleTexture = TextureLoader.get("res/particle.png");
+	this.particleTexture = TextureLoader.get("res/particle2.png");
 	
 	var arrays = [ "aPosition", "aTexcoord", "aLife" ];
 	var uniforms = [ "uProjection", "uModelview", "uSampler" ];
 	this.shaderProgram = ShaderDatabase.link(gl, "particle-vertex-shader", "particle-frag-shader", arrays, uniforms);
-	
-	/*console.log("positionBuffer = " + this.particleMesh.positionBuffer);
-	console.log("texcoordBuffer = " + this.particleMesh.texcoordBuffer);
-	console.log("indexBuffer = " + this.particleMesh.indexBuffer);
-	console.log("texture = " + this.particleTexture);*/
 };
 
 var sum = 0;
@@ -132,12 +127,8 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 		var time = interval / 1000;
 		
 		vec3.subtract([0, particle.pos[1], 0], particle.pos, force);
-		//vec3.scale(force, 35 * time / distSq);
 		vec3.scale(force, 100 * time / distSq);
-		//vec3.negate(force);
-		
 		vec3.add(particle.vel, force);
-		
 		vec3.add(particle.pos, vec3.scale(particle.vel, time, instantVel));
 		
 		// calculate squared distance from observer
@@ -151,7 +142,9 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 	}
 	
 	// sort particles
-	this.particles.sort(this.compareParticles);
+	this.particles.sort(function(a, b) {
+		return a.squaredDistance < b.squaredDistance;
+	});
 	
 	// fill buffers
 	for (var i = 0; i < this.particles.length; i++) {
@@ -212,8 +205,4 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 		this.lifeArray[lifeIndex + 3] = particleLife;
 
 	}
-};
-
-ParticleSystem.prototype.compareParticles = function(a, b) {
-	return a.squaredDistance < b.squaredDistance;
 };

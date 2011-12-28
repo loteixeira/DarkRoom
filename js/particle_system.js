@@ -14,15 +14,29 @@ ParticleSystem = function(gl, particleCount, creationRate, duration) {
 	var arrays = [ "aPosition", "aTexcoord", "aLife" ];
 	var uniforms = [ "uProjection", "uModelview", "uSampler" ];
 	this.shaderProgram = ShaderDatabase.link(gl, "particle-vertex-shader", "particle-frag-shader", arrays, uniforms);
+	
+	this.height = 0;
+	this.averageLife = 0;
+	this.lightPosition = vec3.create([0, 0, 0]);
+	this.lightColor = [0, 0, 0];
+};
+
+ParticleSystem.prototype.getLightPosition = function() {
+	return this.lightPosition;
+};
+
+ParticleSystem.prototype.getLightColor = function() {
+	return this.lightColor;
 };
 
 var sum = 0;
 
 ParticleSystem.prototype.update = function(gl, interval, camera) {
-	/*sum += interval;
+	sum += interval;
 	
-	if (sum >= 1000) {
-		console.log(this.particles.length);
+	/*if (sum >= 1000) {
+		//console.log(this.particles.length);
+		console.log(this.height);
 		sum %= 1000;
 	}*/
 	
@@ -44,6 +58,10 @@ ParticleSystem.prototype.update = function(gl, interval, camera) {
 	// update particles
 	this.updateParticles(interval, camera);
 	
+	// update light
+	this.updateLight();
+	
+	// enable blending
 	gl.enable(gl.BLEND);
 	
 	// setup shader
@@ -112,14 +130,31 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 	var horizontal = vec3.create();
 	var vertical = vec3.create();
 	
+	this.height = 0;
+	this.averageLife = 0;
+	
 	// update particles
 	for (var i = 0; i < this.particles.length; i++) {
 		var particle = this.particles[i];
 		
+		// increase particle's life
 		particle.life += interval;
 		
+		// calculate average life
+		if (this.averageLife == 0) {
+			this.averageLife = particle.life;
+		} else {
+			this.averageLife = (this.averageLife + particle.life) / 2;
+		}
+		
+		// is dead?
 		if (particle.life > this.duration) {
 			this.deadParticles.push(i);
+		}
+		
+		// find the max height
+		if (particle.pos[1] > this.height) {
+			this.height = particle.pos[1];
 		}
 		
 		// update particle position
@@ -131,7 +166,7 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 		vec3.add(particle.vel, force);
 		vec3.add(particle.pos, vec3.scale(particle.vel, time, instantVel));
 		
-		// calculate squared distance from observer
+		// calculate squared distance to observer
 		vec3.subtract(camera.getEye(), particle.pos, toEye);
 		particle.squaredDistance = Math.pow(toEye[0], 2) + Math.pow(toEye[1], 2) + Math.pow(toEye[2], 2);
 	}
@@ -203,6 +238,18 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 		this.lifeArray[lifeIndex + 1] = particleLife;
 		this.lifeArray[lifeIndex + 2] = particleLife;
 		this.lifeArray[lifeIndex + 3] = particleLife;
-
 	}
+};
+
+ParticleSystem.prototype.updateLight = function() {
+	vec3.set([0, this.height / 2, 0], this.lightPosition);
+	
+	var averageValue = this.averageLife / this.duration;
+	var timeFactor = 1 - averageValue;
+	timeFactor *= timeFactor;
+	timeFactor *= 0.1;
+	
+	this.lightColor[0] = timeFactor;
+	this.lightColor[1] = timeFactor * 0.75;
+	this.lightColor[2] = 0;
 };

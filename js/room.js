@@ -5,18 +5,20 @@ Room = function(gl, size) {
 	this.texture = TextureLoader.get("res/wall.jpg");
 	
 	var arrays = [ "aPosition", "aNormal", "aTexcoord" ];
-	var uniforms = [ "uProjection", "uModelview","uSampler", "uAmbientLight", "uDiffuseLight" ];
+	var uniforms = [ "uProjection", "uModelview","uSampler", "uAmbientLight", "uDiffuseLight", "uLightPosition", "uLightColor" ];
 	this.shaderProgram = ShaderDatabase.link(gl, "room-vertex-shader", "room-frag-shader", arrays, uniforms);
 };
 
-Room.prototype.renderCube = function(gl, mesh, projection, modelview) {
+Room.prototype.renderCube = function(gl, mesh, projection, modelview, lightPosition, lightColor) {
 	// setup shader
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, projection);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uModelview"], false, modelview);
     //gl.uniform3fv(this.shaderProgram.uniforms["uDiffuseLight"], [0.1, 0.1, 0.05]);
-    gl.uniform3fv(this.shaderProgram.uniforms["uDiffuseLight"], [1.0, 1.0, 0.5]);
+    gl.uniform3fv(this.shaderProgram.uniforms["uDiffuseLight"], [0.2, 0.2, 0.1]);
     gl.uniform3fv(this.shaderProgram.uniforms["uAmbientLight"], [0.05, 0.05, 0.05]);
+    gl.uniform3fv(this.shaderProgram.uniforms["uLightPosition"], lightPosition);
+    gl.uniform3fv(this.shaderProgram.uniforms["uLightColor"], lightColor);
 	
 	// enable vertex arrays
 	gl.enableVertexAttribArray(this.shaderProgram.arrays["aPosition"]);
@@ -47,12 +49,12 @@ Room.prototype.renderCube = function(gl, mesh, projection, modelview) {
 	gl.flush();	
 };
 
-Room.prototype.update = function(gl, camera) {
+Room.prototype.update = function(gl, camera, lightPosition, lightColor) {
 	gl.disable(gl.BLEND);
 	
-	this.renderCube(gl, this.roomMesh, camera.getProjection(), camera.getModelview());
+	this.renderCube(gl, this.roomMesh, camera.getProjection(), camera.getModelview(), lightPosition, lightColor);
 	
 	var tableTransform = mat4.create(camera.getModelview());
 	mat4.translate(tableTransform, [0, -this.size[1] / 4, 0]);
-	this.renderCube(gl, this.tableMesh, camera.getProjection(), tableTransform);
+	this.renderCube(gl, this.tableMesh, camera.getProjection(), tableTransform, lightPosition, lightColor);
 };

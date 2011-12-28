@@ -85,7 +85,7 @@ ParticleSystem.prototype.update = function(gl, interval, camera) {
 
 ParticleSystem.prototype.createParticle = function() {
 	// randomize start position (using polar coordinates)
-	var radius = Math.random() + 1;
+	var radius = Math.random() + 0.5;
 	var angle = Math.random() * 2 * Math.PI;
 	
 	// randomize start velocity

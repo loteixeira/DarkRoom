@@ -48,16 +48,22 @@ MeshFactory.createParticleMesh = function(gl, count) {
 	return mesh;
 };
 
-MeshFactory.createCubeMesh = function(gl, size, invertNormal) {
+MeshFactory.createCubeMesh = function(gl, size, offset, invertNormal) {
+	if (!offset) {
+		offset = [0, 0, 0];
+	}
+	
 	if (!invertNormal) {
 		invertNormal = false;
 	}
-	
+
 	var halfX = size[0] / 2;
 	var halfY = size[1] / 2;
 	var halfZ = size[2] / 2;
 	
-	// create position buffer
+	console.log(offset);
+	
+	// create position data
 	var positionData = [
 		// at x = halfX
 		halfX, -halfY, -halfZ,  // 0
@@ -96,6 +102,14 @@ MeshFactory.createCubeMesh = function(gl, size, invertNormal) {
 		-halfX, halfY, -halfZ    // 23
 	];
 	
+	// add offset
+	for (var i = 0; i < positionData.length; i += 3) {
+		for (var j = 0; j < 3; j++) {
+			positionData[i + j] += offset[j];
+		}
+	}
+	
+	// create buffer
 	var position = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, position);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positionData), gl.STATIC_DRAW);

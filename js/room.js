@@ -1,7 +1,7 @@
 Room = function(gl, size) {
 	this.size = size;
 	this.roomMesh = MeshFactory.createCubeMesh(gl, size);
-	this.tableMesh = MeshFactory.createCubeMesh(gl, [size[0] / 30, size[1] / 2, size[2] / 30], true);
+	this.tableMesh = MeshFactory.createCubeMesh(gl, [size[0] / 30, size[1] / 2, size[2] / 30], [0, -size[1] / 4, 0], true);
 	this.texture = TextureLoader.get("res/wall.jpg");
 	
 	var arrays = [ "aPosition", "aNormal", "aTexcoord" ];
@@ -14,7 +14,6 @@ Room.prototype.renderCube = function(gl, mesh, projection, modelview, lightPosit
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, projection);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uModelview"], false, modelview);
-    //gl.uniform3fv(this.shaderProgram.uniforms["uDiffuseLight"], [0.1, 0.1, 0.05]);
     gl.uniform3fv(this.shaderProgram.uniforms["uDiffuseLight"], [0.2, 0.2, 0.1]);
     gl.uniform3fv(this.shaderProgram.uniforms["uAmbientLight"], [0.05, 0.05, 0.05]);
     gl.uniform3fv(this.shaderProgram.uniforms["uLightPosition"], lightPosition);
@@ -55,6 +54,6 @@ Room.prototype.update = function(gl, camera, lightPosition, lightColor) {
 	this.renderCube(gl, this.roomMesh, camera.getProjection(), camera.getModelview(), lightPosition, lightColor);
 	
 	var tableTransform = mat4.create(camera.getModelview());
-	mat4.translate(tableTransform, [0, -this.size[1] / 4, 0]);
+	//mat4.translate(tableTransform, [0, -this.size[1] / 4, 0]);
 	this.renderCube(gl, this.tableMesh, camera.getProjection(), tableTransform, lightPosition, lightColor);
 };

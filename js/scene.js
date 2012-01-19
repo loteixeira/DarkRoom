@@ -10,8 +10,8 @@ Scene.prototype.start = function() {
 	
 	var roomSize = [300, 100, 300];
 	this.room = new Room(this.gl, roomSize);
-	this.particleSystem = new ParticleSystem(this.gl, 1000, 3, 900);
-	//this.particleSystem = new ParticleSystem(this.gl, 1, 2, 900);
+	this.particleSystem = new ParticleSystem(this.gl, 500, 5, 900);
+	//this.particleSystem = new ParticleSystem(this.gl, 1, 3, 900);
 	this.camera = new Camera(this.gl, this.canvas.width / this.canvas.height, roomSize[1] / 6);
 };
 

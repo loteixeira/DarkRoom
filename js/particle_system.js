@@ -16,7 +16,7 @@ ParticleSystem = function(gl, particleCount, creationRate, duration) {
 	this.shaderProgram = ShaderDatabase.link(gl, "particle-vertex-shader", "particle-frag-shader", arrays, uniforms);
 	
 	this.height = 0;
-	this.averageLife = 0;
+	this.averageLife = 1;
 	this.lightPosition = vec3.create([0, 0, 0]);
 	this.lightColor = [0, 0, 0];
 };
@@ -34,11 +34,12 @@ var sum = 0;
 ParticleSystem.prototype.update = function(gl, interval, camera) {
 	sum += interval;
 	
-	/*if (sum >= 1000) {
+	if (sum >= 1000) {
 		//console.log(this.particles.length);
-		console.log(this.height);
+		//console.log(this.height);
+		console.log(this.averageLife / this.duration);
 		sum %= 1000;
-	}*/
+	}
 	
 	// check for particle creation
 	this.accumTime += interval;
@@ -126,12 +127,6 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 	var force = vec3.create;
 	var instantVel = vec3.create();
 	var toEye = vec3.create();
-	var view = vec3.create();
-	var horizontal = vec3.create();
-	var vertical = vec3.create();
-	
-	this.height = 0;
-	this.averageLife = 0;
 	
 	// update particles
 	for (var i = 0; i < this.particles.length; i++) {
@@ -140,35 +135,23 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 		// increase particle's life
 		particle.life += interval;
 		
-		// calculate average life
-		if (this.averageLife == 0) {
-			this.averageLife = particle.life;
-		} else {
-			this.averageLife = (this.averageLife + particle.life) / 2;
-		}
-		
 		// is dead?
 		if (particle.life > this.duration) {
 			this.deadParticles.push(i);
+		} else {
+			// update particle position
+			var distSq = vec3.dot(particle.pos, particle.pos);
+			var time = interval / 1000;
+		
+			vec3.subtract([0, particle.pos[1], 0], particle.pos, force);
+			vec3.scale(force, 100 * time / distSq);
+			vec3.add(particle.vel, force);
+			vec3.add(particle.pos, vec3.scale(particle.vel, time, instantVel));
+		
+			// calculate squared distance to observer
+			vec3.subtract(camera.getEye(), particle.pos, toEye);
+			particle.squaredDistance = Math.pow(toEye[0], 2) + Math.pow(toEye[1], 2) + Math.pow(toEye[2], 2);
 		}
-		
-		// find the max height
-		if (particle.pos[1] > this.height) {
-			this.height = particle.pos[1];
-		}
-		
-		// update particle position
-		var distSq = vec3.dot(particle.pos, particle.pos);
-		var time = interval / 1000;
-		
-		vec3.subtract([0, particle.pos[1], 0], particle.pos, force);
-		vec3.scale(force, 100 * time / distSq);
-		vec3.add(particle.vel, force);
-		vec3.add(particle.pos, vec3.scale(particle.vel, time, instantVel));
-		
-		// calculate squared distance to observer
-		vec3.subtract(camera.getEye(), particle.pos, toEye);
-		particle.squaredDistance = Math.pow(toEye[0], 2) + Math.pow(toEye[1], 2) + Math.pow(toEye[2], 2);
 	}
 	
 	// remove dead particles
@@ -182,30 +165,42 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 	});
 	
 	// fill buffers
+	this.height = 0;
+	var view = vec3.create();
+	var horizontal = vec3.create();
+	var vertical = vec3.create();
+	
+	// make particle face observer
+	vec3.subtract(camera.getCenter(), camera.getEye(), view);
+	vec3.normalize(view);
+
+	vec3.cross(camera.getUp(), view, horizontal);
+	vec3.normalize(horizontal);
+	
+	vec3.cross(horizontal, view, vertical);
+	vec3.normalize(vertical);
+	
+	vec3.scale(horizontal, 1);
+	vec3.scale(vertical, 1);
+	
+	// loop through alive particles
 	for (var i = 0; i < this.particles.length; i++) {
 		var particle = this.particles[i];
-		
-		// make particle face observer
-		vec3.subtract(camera.getCenter(), camera.getEye(), view);
-		vec3.normalize(view);
-
-		vec3.cross(camera.getUp(), view, horizontal);
-		vec3.normalize(horizontal);
-		
-		vec3.cross(horizontal, view, vertical);
-		vec3.normalize(vertical);
-		
-		vec3.scale(horizontal, 1);
-		vec3.scale(vertical, 1);
-		
-		// fill position buffer
 		var centerX = particle.pos[0];
 		var centerY = particle.pos[1];
 		var centerZ = particle.pos[2];
 		
-		// first vertex
-		var posIndex = i * 12;
+		this.averageLife += particle.life;
 		
+		// find the max height
+		if (centerY > this.height) {
+			this.height = centerY;
+		}
+		
+		// fill position buffer
+		var posIndex = i * 12;
+
+		// first vertex
 		this.posArray[posIndex] = centerX + horizontal[0] + vertical[0];
 		this.posArray[posIndex + 1] = centerY + horizontal[1] + vertical[1];
 		this.posArray[posIndex + 2] = centerZ + horizontal[2] + vertical[2];
@@ -239,17 +234,22 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 		this.lifeArray[lifeIndex + 2] = particleLife;
 		this.lifeArray[lifeIndex + 3] = particleLife;
 	}
+	
+	this.averageLife /= this.particles.length;
 };
 
 ParticleSystem.prototype.updateLight = function() {
 	vec3.set([0, this.height / 2, 0], this.lightPosition);
 	
 	var averageValue = this.averageLife / this.duration;
-	var timeFactor = 1 - averageValue;
-	timeFactor *= timeFactor;
-	timeFactor *= 0.1;
 	
-	this.lightColor[0] = timeFactor;
-	this.lightColor[1] = timeFactor * 0.75;
+	if (averageValue > 1) {
+		averageValue = 1;
+	}
+	
+	var timeFactor = Math.pow(1 - averageValue, 2);
+	
+	this.lightColor[0] = timeFactor * 0.5;
+	this.lightColor[1] = timeFactor * 0.25;
 	this.lightColor[2] = 0;
 };

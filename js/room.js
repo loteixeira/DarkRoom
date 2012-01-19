@@ -14,7 +14,6 @@ Room.prototype.renderCube = function(gl, mesh, projection, modelview, lightPosit
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, projection);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uModelview"], false, modelview);
-    gl.uniform3fv(this.shaderProgram.uniforms["uDiffuseLight"], [0.2, 0.2, 0.1]);
     gl.uniform3fv(this.shaderProgram.uniforms["uAmbientLight"], [0.05, 0.05, 0.05]);
     gl.uniform3fv(this.shaderProgram.uniforms["uLightPosition"], lightPosition);
     gl.uniform3fv(this.shaderProgram.uniforms["uLightColor"], lightColor);
@@ -52,8 +51,5 @@ Room.prototype.update = function(gl, camera, lightPosition, lightColor) {
 	gl.disable(gl.BLEND);
 	
 	this.renderCube(gl, this.roomMesh, camera.getProjection(), camera.getModelview(), lightPosition, lightColor);
-	
-	var tableTransform = mat4.create(camera.getModelview());
-	//mat4.translate(tableTransform, [0, -this.size[1] / 4, 0]);
-	this.renderCube(gl, this.tableMesh, camera.getProjection(), tableTransform, lightPosition, lightColor);
+	this.renderCube(gl, this.tableMesh, camera.getProjection(), camera.getModelview(), lightPosition, lightColor);
 };

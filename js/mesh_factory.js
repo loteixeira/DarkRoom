@@ -61,8 +61,6 @@ MeshFactory.createCubeMesh = function(gl, size, offset, invertNormal) {
 	var halfY = size[1] / 2;
 	var halfZ = size[2] / 2;
 	
-	console.log(offset);
-	
 	// create position data
 	var positionData = [
 		// at x = halfX

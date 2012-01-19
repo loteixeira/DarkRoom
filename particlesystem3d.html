@@ -84,7 +84,6 @@
 
 			uniform sampler2D uSampler;
 			uniform vec3 uAmbientLight;
-			uniform vec3 uDiffuseLight;
 			uniform vec3 uLightPosition;
 			uniform vec3 uLightColor;
 
@@ -94,10 +93,8 @@
 
 			void main(void) {
 				vec3 lightDir = normalize(uLightPosition - vPosition);
-				//vec3 normalizedPosition = -normalize(vPosition);
 				vec3 normalizedNormal = normalize(vNormal);
 				float lightDotNormal = max(dot(lightDir, normalizedNormal), 0.0);
-				//vec4 color = texture2D(uSampler, vTexcoord) * vec4(uDiffuseLight * lightDotNormal, 1.0);
 				vec4 color = texture2D(uSampler, vTexcoord) * vec4(uAmbientLight + uLightColor * lightDotNormal, 1.0);
 				gl_FragColor = color;
 			}

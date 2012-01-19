@@ -47,13 +47,13 @@ Camera.prototype.getUp = function() {
 };
 
 Camera.prototype.update = function(interval) {
-	if (Math.abs(this.velTheta) < 0.001) {
+	if (Math.abs(this.velTheta) < 0.01) {
 		this.velTheta = 0;
 	} else {
 		this.velTheta *= 0.99;
 	}
 	
-	if (Math.abs(this.velZ) < 0.001) {
+	if (Math.abs(this.velZ) < 0.01) {
 		this.velZ = 0;
 	} else {
 		this.velZ *= 0.99;

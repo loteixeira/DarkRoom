@@ -18,15 +18,15 @@ ParticleSystem = function(gl, particleCount, creationRate, duration) {
 	this.height = 0;
 	this.averageLife = 1;
 	this.lightPosition = vec3.create([0, 0, 0]);
-	this.lightColor = [0, 0, 0];
+	this.lightIntensity = 0;
 };
 
 ParticleSystem.prototype.getLightPosition = function() {
 	return this.lightPosition;
 };
 
-ParticleSystem.prototype.getLightColor = function() {
-	return this.lightColor;
+ParticleSystem.prototype.getLightIntensity = function() {
+	return this.lightIntensity;
 };
 
 var sum = 0;
@@ -37,7 +37,7 @@ ParticleSystem.prototype.update = function(gl, interval, camera) {
 	if (sum >= 1000) {
 		//console.log(this.particles.length);
 		//console.log(this.height);
-		console.log(this.averageLife / this.duration);
+		//console.log(this.averageLife / this.duration);
 		sum %= 1000;
 	}
 	
@@ -247,9 +247,6 @@ ParticleSystem.prototype.updateLight = function() {
 		averageValue = 1;
 	}
 	
-	var timeFactor = Math.pow(1 - averageValue, 2);
-	
-	this.lightColor[0] = timeFactor * 0.5;
-	this.lightColor[1] = timeFactor * 0.25;
-	this.lightColor[2] = 0;
+	var timeFactor = 1 - averageValue;
+	this.lightIntensity = timeFactor;
 };

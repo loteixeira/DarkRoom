@@ -17,7 +17,7 @@ Scene.prototype.start = function() {
 
 Scene.prototype.update = function(interval) {
 	this.camera.update(interval);
-	this.room.update(this.gl, this.camera, this.particleSystem.getLightPosition(), this.particleSystem.getLightColor());
+	this.room.update(this.gl, this.camera, this.particleSystem.getLightPosition(), this.particleSystem.getLightIntensity());
 	this.particleSystem.update(this.gl, interval, this.camera);
 };
 

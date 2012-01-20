@@ -5,18 +5,18 @@ Room = function(gl, size) {
 	this.texture = TextureLoader.get("res/wall.jpg");
 	
 	var arrays = [ "aPosition", "aNormal", "aTexcoord" ];
-	var uniforms = [ "uProjection", "uModelview","uSampler", "uAmbientLight", "uDiffuseLight", "uLightPosition", "uLightColor" ];
+	var uniforms = [ "uProjection", "uModelview","uSampler", "uAmbientLight", "uLightPosition", "uLightIntensity" ];
 	this.shaderProgram = ShaderDatabase.link(gl, "room-vertex-shader", "room-frag-shader", arrays, uniforms);
 };
 
-Room.prototype.renderCube = function(gl, mesh, projection, modelview, lightPosition, lightColor) {
+Room.prototype.renderCube = function(gl, mesh, camera, lightPosition, lightIntensity) {
 	// setup shader
     gl.useProgram(this.shaderProgram);
-    gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, projection);
-    gl.uniformMatrix4fv(this.shaderProgram.uniforms["uModelview"], false, modelview);
-    gl.uniform3fv(this.shaderProgram.uniforms["uAmbientLight"], [0.05, 0.05, 0.05]);
+    gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, camera.getProjection());
+    gl.uniformMatrix4fv(this.shaderProgram.uniforms["uModelview"], false, camera.getModelview());
+    gl.uniform3fv(this.shaderProgram.uniforms["uAmbientLight"], [0.1, 0.1, 0.1]);
     gl.uniform3fv(this.shaderProgram.uniforms["uLightPosition"], lightPosition);
-    gl.uniform3fv(this.shaderProgram.uniforms["uLightColor"], lightColor);
+    gl.uniform1f(this.shaderProgram.uniforms["uLightIntensity"], lightIntensity);
 	
 	// enable vertex arrays
 	gl.enableVertexAttribArray(this.shaderProgram.arrays["aPosition"]);
@@ -47,9 +47,9 @@ Room.prototype.renderCube = function(gl, mesh, projection, modelview, lightPosit
 	gl.flush();	
 };
 
-Room.prototype.update = function(gl, camera, lightPosition, lightColor) {
+Room.prototype.update = function(gl, camera, lightPosition, lightIntensity) {
 	gl.disable(gl.BLEND);
 	
-	this.renderCube(gl, this.roomMesh, camera.getProjection(), camera.getModelview(), lightPosition, lightColor);
-	this.renderCube(gl, this.tableMesh, camera.getProjection(), camera.getModelview(), lightPosition, lightColor);
+	this.renderCube(gl, this.roomMesh, camera, lightPosition, lightIntensity);
+	this.renderCube(gl, this.tableMesh, camera, lightPosition, lightIntensity);
 };

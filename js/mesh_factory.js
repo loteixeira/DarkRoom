@@ -156,13 +156,28 @@ MeshFactory.createCubeMesh = function(gl, size, offset, invertNormal) {
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalData), gl.STATIC_DRAW);
 	
 	// create texture coordinate buffer
+	var maxSize = Math.max(size[0], Math.max(size[1], size[2]));
 	var texcoordData = [];
 	
 	for (var i = 0; i < 6; i++) {
+		var maxU = 1.0;
+		var maxV = 1.0;
+		
+		if (i == 0 || i == 1) {
+			maxU = size[2] / maxSize;
+			maxV = size[1] / maxSize;
+		} else if (i == 2 || i == 3) {
+			maxU = size[0] / maxSize;
+			maxV = size[2] / maxSize;
+		} else {
+			maxU = size[0] / maxSize;
+			maxV = size[1] / maxSize;			
+		}
+		
 		texcoordData.push(0.0, 0.0);
-		texcoordData.push(1.0, 0.0);
-		texcoordData.push(1.0, 1.0);
-		texcoordData.push(0.0, 1.0);
+		texcoordData.push(maxU, 0.0);
+		texcoordData.push(maxU, maxV);
+		texcoordData.push(0.0, maxV);
 	}
 	
 	var texcoord = gl.createBuffer();

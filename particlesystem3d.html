@@ -103,7 +103,7 @@
 
 				vec4 color;
 				color += texture2D(uSampler, vTexcoord) * vec4(uAmbientLight * attenuationFactor, 1.0);
-				color += texture2D(uSampler, vTexcoord) * vec4(vec3(1.0, 0.80, 0.0) * lightDotNormal * attenuationFactor, 1.0);
+				color += texture2D(uSampler, vTexcoord) * vec4(vec3(1.0, 0.8, 0.0) * lightDotNormal * attenuationFactor, 1.0);
 				gl_FragColor = color;
 			}
 		</script>

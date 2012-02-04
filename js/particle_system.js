@@ -16,7 +16,7 @@ ParticleSystem = function(gl, particleCount, creationRate, duration) {
 	this.shaderProgram = ShaderDatabase.link(gl, "particle-vertex-shader", "particle-frag-shader", arrays, uniforms);
 	
 	this.height = 0;
-	this.averageLife = 1;
+	this.averageLife = 0;
 	this.lightPosition = vec3.create([0, 0, 0]);
 	this.lightIntensity = 0;
 };
@@ -49,7 +49,9 @@ ParticleSystem.prototype.update = function(gl, interval, camera) {
 		
 		for (var i = 0; i < times; i++) {
 			if (this.particles.length < this.particleCount) {
-				this.createParticle();
+				if (Math.round(Math.random() * 2) != 1) {
+					this.createParticle();
+				}
 			}
 		}
 		
@@ -166,6 +168,7 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 	
 	// fill buffers
 	this.height = 0;
+	this.averageLife = 0;
 	var view = vec3.create();
 	var horizontal = vec3.create();
 	var vertical = vec3.create();
@@ -241,12 +244,20 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 ParticleSystem.prototype.updateLight = function() {
 	vec3.set([0, this.height / 2, 0], this.lightPosition);
 	
+	//console.log("this.averageLife = " + this.averageLife);
+	
 	var averageValue = this.averageLife / this.duration;
+	
+	//console.log("averageValue1 = " + averageValue);
 	
 	if (averageValue > 1) {
 		averageValue = 1;
 	}
 	
+	//console.log("averageValue2 = " + averageValue);
+	
 	var timeFactor = 1 - averageValue;
 	this.lightIntensity = timeFactor;
+	
+	//console.log("this.lightIntensity = " + this.lightIntensity);
 };

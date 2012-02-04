@@ -35,8 +35,7 @@ window.onload = function () {
     	//new TextureLoader(gl, "res/particle.png", function(){});
     	var textures = [
 			"res/particle.png",
-			"res/wall.jpg",
-			"res/normal.jpg"
+			"res/wall.jpg"
 		];
     	TextureLoader.load(gl, textures, start);
     	

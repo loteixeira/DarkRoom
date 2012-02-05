@@ -97,12 +97,12 @@
 				vec3 normalizedNormal = normalize(vNormal);
 
 				float distance = length(pixelVec);
-				float quadraticFactor = uLightIntensity * 0.001;
+				float quadraticFactor = pow(1.0 - uLightIntensity, 2.0) * 0.005;
 				float lightDotNormal = max(dot(lightDir, normalizedNormal), 0.0);
-				float attenuationFactor = 1.0 / (1.0 + quadraticFactor * pow(distance, 2.0));
+				float attenuationFactor = uLightIntensity * 5.0 / (1.0 + quadraticFactor * pow(distance, 2.0));
 
 				vec4 color;
-				color += texture2D(uSampler, vTexcoord) * vec4(uAmbientLight * attenuationFactor, 1.0);
+				color += texture2D(uSampler, vTexcoord) * vec4(uAmbientLight, 1.0);
 				color += texture2D(uSampler, vTexcoord) * vec4(vec3(1.0, 0.8, 0.0) * lightDotNormal * attenuationFactor, 1.0);
 				gl_FragColor = color;
 			}

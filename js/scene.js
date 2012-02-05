@@ -10,7 +10,7 @@ Scene.prototype.start = function() {
 	
 	var roomSize = [300, 100, 300];
 	this.room = new Room(this.gl, roomSize);
-	this.particleSystem = new ParticleSystem(this.gl, 500, 3, 700);
+	this.particleSystem = new ParticleSystem(this.gl, 500, 1, 500);
 	//this.particleSystem = new ParticleSystem(this.gl, 1, 3, 900);
 	this.camera = new Camera(this.gl, this.canvas.width / this.canvas.height, roomSize[1] / 6);
 };
@@ -27,4 +27,11 @@ Scene.prototype.reshape = function(width, height) {
 
 Scene.prototype.mouseEvent = function(type, event) {
 	this.camera.mouseEvent(type, event);
+};
+
+Scene.prototype.keyboardEvent = function(type, event) {
+	if (type == "up" && event.keyCode == 32) {
+	//	console.log(type + ", " + event);
+		this.particleSystem.setEnable(!this.particleSystem.isEnable());
+	}
 };

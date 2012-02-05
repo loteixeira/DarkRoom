@@ -2,6 +2,7 @@ ParticleSystem = function(gl, particleCount, creationRate, duration) {
 	this.particleCount = particleCount;
 	this.creationRate = creationRate;
 	this.duration = duration;
+	this.enable = true;
 	
 	this.accumTime = 0;
 	this.particles = new Array();
@@ -21,6 +22,14 @@ ParticleSystem = function(gl, particleCount, creationRate, duration) {
 	this.lightIntensity = 0;
 };
 
+ParticleSystem.prototype.setEnable = function(enable) {
+	this.enable = enable;
+};
+
+ParticleSystem.prototype.isEnable = function() {
+	return this.enable;
+};
+
 ParticleSystem.prototype.getLightPosition = function() {
 	return this.lightPosition;
 };
@@ -36,8 +45,6 @@ ParticleSystem.prototype.update = function(gl, interval, camera) {
 	
 	if (sum >= 1000) {
 		//console.log(this.particles.length);
-		//console.log(this.height);
-		//console.log(this.averageLife / this.duration);
 		sum %= 1000;
 	}
 	
@@ -48,8 +55,8 @@ ParticleSystem.prototype.update = function(gl, interval, camera) {
 		var times = Math.round(this.accumTime / this.creationRate);
 		
 		for (var i = 0; i < times; i++) {
-			if (this.particles.length < this.particleCount) {
-				if (Math.round(Math.random() * 2) != 1) {
+			if (this.enable && this.particles.length < this.particleCount) {
+				if (Math.round(Math.random() * 3) != 1) {
 					this.createParticle();
 				}
 			}
@@ -106,7 +113,7 @@ ParticleSystem.prototype.update = function(gl, interval, camera) {
 
 ParticleSystem.prototype.createParticle = function() {
 	// randomize start position (using polar coordinates)
-	var radius = Math.random() + 0.5;
+	var radius = Math.random() + 0.4;
 	var angle = Math.random() * 2 * Math.PI;
 	
 	// randomize start velocity
@@ -146,7 +153,7 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 			var time = interval / 1000;
 		
 			vec3.subtract([0, particle.pos[1], 0], particle.pos, force);
-			vec3.scale(force, 100 * time / distSq);
+			vec3.scale(force, 120 * time / distSq);
 			vec3.add(particle.vel, force);
 			vec3.add(particle.pos, vec3.scale(particle.vel, time, instantVel));
 		
@@ -183,8 +190,8 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 	vec3.cross(horizontal, view, vertical);
 	vec3.normalize(vertical);
 	
-	vec3.scale(horizontal, 1);
-	vec3.scale(vertical, 1);
+	vec3.scale(horizontal, 0.75);
+	vec3.scale(vertical, 0.75);
 	
 	// loop through alive particles
 	for (var i = 0; i < this.particles.length; i++) {
@@ -243,21 +250,16 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 
 ParticleSystem.prototype.updateLight = function() {
 	vec3.set([0, this.height / 2, 0], this.lightPosition);
+
+	if (isNaN(this.averageLife)) {
+		this.lightIntensity = 0;
+	} else {
+		var averageValue = this.averageLife / this.duration;
 	
-	//console.log("this.averageLife = " + this.averageLife);
+		if (averageValue > 1) {
+			averageValue = 1;
+		}
 	
-	var averageValue = this.averageLife / this.duration;
-	
-	//console.log("averageValue1 = " + averageValue);
-	
-	if (averageValue > 1) {
-		averageValue = 1;
+		this.lightIntensity = averageValue * (this.particles.length / this.particleCount);
 	}
-	
-	//console.log("averageValue2 = " + averageValue);
-	
-	var timeFactor = 1 - averageValue;
-	this.lightIntensity = timeFactor;
-	
-	//console.log("this.lightIntensity = " + this.lightIntensity);
 };

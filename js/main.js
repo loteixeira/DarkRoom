@@ -50,7 +50,7 @@ window.onload = function () {
 	}
 };
 
-/*window.onresize = function(e) {
+window.onresize = function(e) {
 	if (scene) {
 		scene.canvas.width = window.innerWidth;
 		scene.canvas.height = window.innerHeight;
@@ -59,7 +59,7 @@ window.onload = function () {
 
 		scene.reshape(scene.canvas.width, scene.canvas.height);
 	}
-};*/
+};
 
 window.onmousedown = function(e) {
 	if (scene) {
@@ -79,6 +79,18 @@ window.onmouseup = function(e) {
 	}
 };
 
+window.onkeydown = function(e) {
+	if (scene) {
+		scene.keyboardEvent("down", e);
+	}
+};
+
+window.onkeyup = function(e) {
+	if (scene) {
+		scene.keyboardEvent("up", e);
+	}
+};
+
 function start() {
 	scene = new Scene(canvas, gl);
 	
@@ -92,10 +104,10 @@ function createCanvas() {
 	body.style.margin = '0';
 	body.appendChild(canvas);
 	
-	//canvas.width = window.innerWidth;
-	//canvas.height = window.innerHeight;
-	canvas.width = 800;
-	canvas.height = 600;
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	//canvas.width = 800;
+	//canvas.height = 600;
 	
 	return canvas;
 }

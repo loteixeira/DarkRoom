@@ -148,9 +148,9 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 			vec3.add(particle.vel, force);
 			vec3.add(particle.pos, vec3.scale(particle.vel, time, instantVel));
 		
-			// calculate squared distance to observer
-			vec3.subtract(camera.getEye(), particle.pos, toEye);
-			particle.squaredDistance = Math.pow(toEye[0], 2) + Math.pow(toEye[1], 2) + Math.pow(toEye[2], 2);
+			// calculate squared distance from observer
+			mat4.multiplyVec3(camera.getModelview(), particle.pos, toEye);
+			particle.squaredDistance = vec3.dot(toEye, toEye);
 		}
 	}
 	
@@ -180,9 +180,6 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 	
 	vec3.cross(horizontal, view, vertical);
 	vec3.normalize(vertical);
-	
-	//vec3.scale(horizontal, 0.75);
-	//vec3.scale(vertical, 0.75);
 	
 	vec3.scale(horizontal, 1);
 	vec3.scale(vertical, 1);

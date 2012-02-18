@@ -126,7 +126,7 @@ function startWebGL(canvas) {
 }
 
 function update(canvas, gl) {
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.ALPHA_BUFFER_BIT);
 	
 	var now = (new Date()).getTime();
 	scene.update(now - lastUpdate);

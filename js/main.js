@@ -15,14 +15,12 @@ window.onload = function () {
 	
 	if (canvas && gl) {
 		// webgl configuration
-		//gl.clearColor(0.0, 0.4, 1.0, 1.0);
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
     	gl.clearDepth(1.0);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LESS);
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_COLOR);
-        //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         	
         // load shaders
     	var shaders = [
@@ -32,7 +30,6 @@ window.onload = function () {
     	ShaderDatabase.load(gl, shaders);
     	
     	// load textures
-    	//new TextureLoader(gl, "res/particle.png", function(){});
     	var textures = [
 			"res/particle.png",
 			"res/wall.jpg"
@@ -106,8 +103,6 @@ function createCanvas() {
 	
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
-	//canvas.width = 800;
-	//canvas.height = 600;
 	
 	return canvas;
 }
@@ -116,7 +111,7 @@ function startWebGL(canvas) {
 	var gl = null;
 	
 	try {
-		gl = canvas.getContext("experimental-webgl");
+		gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 		gl.viewportWidth = canvas.width;
 		gl.viewportHeight = canvas.height;
 	} catch(e) {

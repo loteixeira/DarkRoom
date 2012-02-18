@@ -38,16 +38,7 @@ ParticleSystem.prototype.getLightIntensity = function() {
 	return this.lightIntensity;
 };
 
-var sum = 0;
-
 ParticleSystem.prototype.update = function(gl, interval, camera) {
-	sum += interval;
-	
-	if (sum >= 1000) {
-		//console.log(this.particles.length);
-		sum %= 1000;
-	}
-	
 	// check for particle creation
 	this.accumTime += interval;
 	
@@ -190,8 +181,11 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 	vec3.cross(horizontal, view, vertical);
 	vec3.normalize(vertical);
 	
-	vec3.scale(horizontal, 0.75);
-	vec3.scale(vertical, 0.75);
+	//vec3.scale(horizontal, 0.75);
+	//vec3.scale(vertical, 0.75);
+	
+	vec3.scale(horizontal, 1);
+	vec3.scale(vertical, 1);
 	
 	// loop through alive particles
 	for (var i = 0; i < this.particles.length; i++) {

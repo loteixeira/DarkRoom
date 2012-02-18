@@ -47,9 +47,9 @@ ParticleSystem.prototype.update = function(gl, interval, camera) {
 		
 		for (var i = 0; i < times; i++) {
 			if (this.enable && this.particles.length < this.particleCount) {
-				if (Math.round(Math.random() * 3) != 1) {
+				//if (Math.round(Math.random() * 3) != 1) {
 					this.createParticle();
-				}
+				//}
 			}
 		}
 		
@@ -181,8 +181,8 @@ ParticleSystem.prototype.updateParticles = function(interval, camera) {
 	vec3.cross(horizontal, view, vertical);
 	vec3.normalize(vertical);
 	
-	vec3.scale(horizontal, 1);
-	vec3.scale(vertical, 1);
+	//vec3.scale(horizontal, 1);
+	//vec3.scale(vertical, 1);
 	
 	// loop through alive particles
 	for (var i = 0; i < this.particles.length; i++) {

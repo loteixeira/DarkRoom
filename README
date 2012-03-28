@@ -1,6 +1,9 @@
 Javascript and WebGL demo.
 Simulation of fire (particle system) within a dark room (walls with dynamic lighting).
 
+Check live version:
+http://www.disturbedcoder.com/files/DarkRoom/
+
 Third party libraries:
 gl-matrix (https://github.com/toji/gl-matrix)
 stats.js (https://github.com/mrdoob/stats.js)

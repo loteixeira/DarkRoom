@@ -62,6 +62,9 @@ ParticleSystem.prototype.update = function(gl, interval, camera) {
 	// update light
 	this.updateLight();
 	
+	// disable depth test
+	gl.disable(gl.DEPTH_TEST);
+	
 	// enable blending
 	gl.enable(gl.BLEND);
 	

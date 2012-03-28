@@ -98,6 +98,7 @@ function start() {
 function createCanvas() {
 	var canvas = document.createElement("canvas");
 	var body = document.getElementById('body');
+	
 	body.style.margin = '0';
 	body.appendChild(canvas);
 	

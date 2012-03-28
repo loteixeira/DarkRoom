@@ -10,6 +10,9 @@ Room = function(gl, size) {
 };
 
 Room.prototype.renderCube = function(gl, mesh, camera, lightPosition, lightIntensity) {
+	// enable depth test
+	gl.enable(gl.DEPTH_TEST);
+	
 	// setup shader
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, camera.getProjection());

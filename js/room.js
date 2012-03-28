@@ -17,7 +17,7 @@ Room.prototype.renderCube = function(gl, mesh, camera, lightPosition, lightInten
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uProjection"], false, camera.getProjection());
     gl.uniformMatrix4fv(this.shaderProgram.uniforms["uModelview"], false, camera.getModelview());
-    gl.uniform3fv(this.shaderProgram.uniforms["uAmbientLight"], [0.04, 0.03, 0.01]);
+    gl.uniform3fv(this.shaderProgram.uniforms["uAmbientLight"], [0.08, 0.06, 0.02]);
     gl.uniform3fv(this.shaderProgram.uniforms["uLightPosition"], lightPosition);
     gl.uniform1f(this.shaderProgram.uniforms["uLightIntensity"], lightIntensity);
 	

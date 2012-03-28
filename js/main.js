@@ -5,6 +5,7 @@ var frameRate = 60;
 var interval = 1000 / frameRate;
 var lastUpdate = 0;
 var stats;
+var div;
 var canvas;
 var gl;
 var scene;
@@ -43,11 +44,11 @@ window.onload = function () {
     	stats.domElement.style.left = '0px';
     	stats.domElement.style.top = '0px';
 
-    	document.body.appendChild(stats.domElement);
+    	div.appendChild(stats.domElement);
 	}
 };
 
-window.onresize = function(e) {
+/*window.onresize = function(e) {
 	if (scene) {
 		scene.canvas.width = window.innerWidth;
 		scene.canvas.height = window.innerHeight;
@@ -56,7 +57,7 @@ window.onresize = function(e) {
 
 		scene.reshape(scene.canvas.width, scene.canvas.height);
 	}
-};
+};*/
 
 window.onmousedown = function(e) {
 	if (scene) {
@@ -96,14 +97,16 @@ function start() {
 }
 
 function createCanvas() {
-	var canvas = document.createElement("canvas");
-	var body = document.getElementById('body');
+	div = document.getElementById("content-div");
+	var canvas = document.getElementById("content-canvas");
 	
-	body.style.margin = '0';
-	body.appendChild(canvas);
-	
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+	div.style.margin = '0 auto';
+	div.style.position = 'relative';
+	div.style.width = '640px';
+	div.style.height = '480px';
+
+	canvas.width = 640;
+	canvas.height = 480;
 	
 	return canvas;
 }
